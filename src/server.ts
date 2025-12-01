@@ -9,6 +9,8 @@ import http from "http";
 
 import initDB, { pool } from "./config/db.ts";
 import config from "./config/index.ts";
+import logger from "./middleware/logger.ts";
+import { userRoutes } from "./modules/user/user.route.ts";
 const app = express();
 const port = config.port;
 
@@ -17,10 +19,8 @@ app.use(json());
 app.use(urlencoded());
 initDB();
 
-const logger=async(req:Request,res:Response,next:NextFunction)=>{
-    console.log('Middleware');
-    next();
-}
+
+app.use('/api/v1',userRoutes);
 
 app.get("/users/:id", async (req: Request, res: Response) => {
   console.log("hit here");
