@@ -6,28 +6,17 @@ import express, {
   type Response,
 } from "express";
 import http from "http";
-import { config } from "./app/config/index.js";
-import { db } from "./app/config/database.js";
+
+import initDB, { pool } from "./config/db.ts";
+import config from "./config/index.ts";
 const app = express();
 const port = config.port;
 
-(async () => {
-  await db.query(`
-CREATE TABLE IF NOT EXISTS users(
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL,
-  age INT,
-  phone VARCHAR(11),
-  address TEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-
-)`);
-})();
 
 app.use(json());
 app.use(urlencoded());
+initDB();
+
 const logger=async(req:Request,res:Response,next:NextFunction)=>{
     console.log('Middleware');
     next();
@@ -38,7 +27,7 @@ app.get("/users/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   console.log("id", id);
 
-  const result = await db.query(`SELECT * FROM users WHERE id=${id}`);
+  const result = await pool.query(`SELECT * FROM users WHERE id=${id}`);
   console.log(result);
   res.status(200).json({
     status: 200,
@@ -48,7 +37,7 @@ app.get("/users/:id", async (req: Request, res: Response) => {
 });
 
 app.get("/users",logger, async (req: Request, res: Response) => {
-  const result = await db.query("SELECT * FROM users");
+  const result = await pool.query("SELECT * FROM users");
   res.status(200).json({
     status: 200,
     success: true,
@@ -60,7 +49,7 @@ app.post("/users", async (req: Request, res: Response) => {
   console.log(typeof req?.body);
   const [, a, b, c, d, e] = Object.values(req.body);
 
-  const result = await db.query(
+  const result = await pool.query(
     `INSERT INTO users (name,email,age,phone,address) VALUES ($1, $2, $3, $4, $5) RETURNING * `,
     [a, b, c, d, e]
   );
@@ -102,7 +91,7 @@ app.put("/users/:id", async (req: Request, res: Response) => {
 
   values.push(id);
 
-  const result = await db.query(query, values);
+  const result = await pool.query(query, values);
 
   return res.json({
     success: true,
@@ -113,7 +102,7 @@ app.put("/users/:id", async (req: Request, res: Response) => {
 
 app.delete("/users/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const deleteData = await db.query(`DELETE FROM users WHERE id=${id}`);
+  const deleteData = await pool.query(`DELETE FROM users WHERE id=${id}`);
   console.log(deleteData);
   res.status(200).json({
     success: true,
