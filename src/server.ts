@@ -1,6 +1,7 @@
 import express, {
   json,
   urlencoded,
+  type NextFunction,
   type Request,
   type Response,
 } from "express";
@@ -27,36 +28,32 @@ CREATE TABLE IF NOT EXISTS users(
 
 app.use(json());
 app.use(urlencoded());
+const logger=async(req:Request,res:Response,next:NextFunction)=>{
+    console.log('Middleware');
+    next();
+}
 
-app.get("/users/:id", async(req: Request, res: Response) => {
-    console.log("hit here")
-    const {id} = req.params;
-    console.log("id",id);
+app.get("/users/:id", async (req: Request, res: Response) => {
+  console.log("hit here");
+  const { id } = req.params;
+  console.log("id", id);
 
-    const result=await db.query(`SELECT * FROM users WHERE id=${id}`);
-    console.log(result);
-    res.status(200).json({
-      status: 200,
-      success: true,
-      data: result.rows,
-    });
-
+  const result = await db.query(`SELECT * FROM users WHERE id=${id}`);
+  console.log(result);
+  res.status(200).json({
+    status: 200,
+    success: true,
+    data: result.rows,
+  });
 });
 
-
-
-
-
-
-app.get("/users", async(req: Request, res: Response) => {
-    
-    const result=await db.query('SELECT * FROM users');
-    res.status(200).json({
-      status: 200,
-      success: true,
-      data: result.rows,
-    });
-
+app.get("/users",logger, async (req: Request, res: Response) => {
+  const result = await db.query("SELECT * FROM users");
+  res.status(200).json({
+    status: 200,
+    success: true,
+    data: result.rows,
+  });
 });
 
 app.post("/users", async (req: Request, res: Response) => {
@@ -70,76 +67,68 @@ app.post("/users", async (req: Request, res: Response) => {
   res.status(200).json({
     status: 200,
     success: true,
-    message:"user created successfully",
+    message: "user created successfully",
     data: result.rows[0],
   });
 });
 
 
-// app.put("/users", async (req: Request, res: Response) => {
-//     console.log(typeof req?.body);
-//     const [f, a, b, c, d, e] = Object.values(req.body);
-  
-//     const result = await db.query(
-//       `UPDATE users SET name=$1, email=$2, age=$3, phone=$4, address=$5  WHERE id=$6 RETURNING * `,
-//       [a, b, c, d, e,f]
-//     );
-//     res.status(200).json({
-//       status: 200,
-//       success: true,
-//       message:"user updated successfully",
-//       data: result.rows[0],
-//     });
-//   });
-
 app.put("/users/:id", async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const data = req.body;
-  
-    if (!id) {
-      return res.status(400).json({ message: "User ID missing" });
-    }
-  
-    let fields:any = [];
-    let values = [];
-  
-    Object.entries(data).forEach(([key, value], index) => {
-      fields.push(`${key}=$${index + 1}`);
-      values.push(value);
-    });
-  
-    if (fields.length === 0) {
-      return res.status(400).json({ message: "No data to update" });
-    }
-  
-    const query = `
+  const { id } = req.params;
+  const data = req.body;
+
+  if (!id) {
+    return res.status(400).json({ message: "User ID missing" });
+  }
+
+  let fields: any = [];
+  let values = [];
+
+  Object.entries(data).forEach(([key, value], index) => {
+    fields.push(`${key}=$${index + 1}`);
+    values.push(value);
+  });
+
+  if (fields.length === 0) {
+    return res.status(400).json({ message: "No data to update" });
+  }
+
+  const query = `
       UPDATE users
       SET ${fields.join(", ")}
       WHERE id=$${fields.length + 1}
       RETURNING *;
     `;
-  
-    values.push(id);
-  
-    const result = await db.query(query, values);
-  
-    return res.json({
-      success: true,
-      message: "User updated successfully",
-      data: result.rows[0],
-    });
-  });
 
-app.delete("/users/:id",async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const deleteData=await db.query(`DELETE FROM users WHERE id=${id}`);
-    console.log(deleteData);
-    res.status(200).json({
-        success:true,
-        message:'Data deleted successfully',
-        data:deleteData
-    })
-  })
+  values.push(id);
+
+  const result = await db.query(query, values);
+
+  return res.json({
+    success: true,
+    message: "User updated successfully",
+    data: result.rows[0],
+  });
+});
+
+app.delete("/users/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const deleteData = await db.query(`DELETE FROM users WHERE id=${id}`);
+  console.log(deleteData);
+  res.status(200).json({
+    success: true,
+    message: "Data deleted successfully",
+    data: deleteData,
+  });
+});
+
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    success: false,
+    message: "Not Found Route",
+    path: req.path,
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
