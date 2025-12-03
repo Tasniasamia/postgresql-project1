@@ -8,14 +8,13 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    "module": "esnext",
     "target": "esnext",
-    "types": [],
     // For nodejs:
     // "lib": ["esnext"],
-    // "types": ["node"],
+    "types": ["node"],
     // and npm install -D @types/node
-   // "moduleResolution": "bundler",
+   "moduleResolution": "bundler",  //important for ignore import * 
     "allowImportingTsExtensions": true,
     "noEmit": true,
         // Other Outputs

@@ -13,7 +13,7 @@ const loginUser=async (req: Request, res: Response) => {
     
             })
         }
-        res.status(200).json({
+        return res.status(200).json({
           status: 200,
           success: true,
           message: "user created successfully",
@@ -21,7 +21,7 @@ const loginUser=async (req: Request, res: Response) => {
         });
     }
     catch(err:any){
-        res.status(400).json({
+      return  res.status(400).json({
             status:400,
             message:err.message,
             success:false
