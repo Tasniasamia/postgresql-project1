@@ -10,6 +10,7 @@ import initDB, { pool } from "./config/db.ts";
 import config from "./config/index.ts";
 import logger from "./middleware/logger.ts";
 import { userRoutes } from "./modules/user/user.route.ts";
+import { AuthRoutes } from "./modules/auth/auth.route.ts";
 const app = express();
 const port = config.port;
 
@@ -20,6 +21,8 @@ initDB();
 
 
 app.use('/api/v1',userRoutes);
+app.use('/api/v1',AuthRoutes);
+
 
 
 

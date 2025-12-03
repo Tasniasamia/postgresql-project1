@@ -12,6 +12,8 @@ await pool.query(`
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL,
+    password TEXT,
+    role VARCHAR(100),
     age INT,
     phone VARCHAR(11),
     address TEXT,

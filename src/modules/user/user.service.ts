@@ -1,12 +1,16 @@
+import bcrypt from "bcryptjs";
 import { pool } from "../../config/db.ts";
 
-const createUser=async(name:string,email:string)=>{
+const createUser=async(payload:Record<string,unknown>)=>{
+    const {name,email,role,password}= payload;
+    const hasPassword=bcrypt.hashSync(password as string,10);
     const result = await pool.query(
-        `INSERT INTO users (name,email) VALUES ($1, $2) RETURNING * `,
-        [name, email]
+        `INSERT INTO users (name,email,password,role) VALUES ($1, $2, $3, $4) RETURNING name,email,role `,
+        [name, email,hasPassword,role]
       );
       return result;
 }
+
 
 const getSingleUser=async(id:number|string|any)=>{
     const result= await pool.query(`SELECT * FROM users WHERE id=${id}`);
