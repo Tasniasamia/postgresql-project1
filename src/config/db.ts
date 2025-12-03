@@ -1,5 +1,5 @@
 import pg from 'pg'
-import config from './index.ts'
+import config from './'
 
 const { Pool, Client } = pg
 export const pool=new Pool({

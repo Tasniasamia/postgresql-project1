@@ -6,11 +6,11 @@ import express, {
   type Response,
 } from "express";
 
-import initDB, { pool } from "./config/db.ts";
-import config from "./config/index.ts";
-import logger from "./middleware/logger.ts";
-import { userRoutes } from "./modules/user/user.route.ts";
-import { AuthRoutes } from "./modules/auth/auth.route.ts";
+import initDB, { pool } from "./config/db";
+import config from "./config";
+import logger from "./middleware/logger";
+import { userRoutes } from "./modules/user/user.route";
+import { AuthRoutes } from "./modules/auth/auth.route";
 const app = express();
 const port = config.port;
 

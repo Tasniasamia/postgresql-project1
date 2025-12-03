@@ -1,7 +1,7 @@
 import { Router } from "express";
-import logger from "../../middleware/logger.ts";
-import { userController } from "./user.controller.ts";
-import { auth } from "../../middleware/auth.ts";
+import logger from "../../middleware/logger";
+import { userController } from "./user.controller";
+import { auth } from "../../middleware/auth";
 
 const route=Router();
 route.post("/users",logger, userController.createUser);

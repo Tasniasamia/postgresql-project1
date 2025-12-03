@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import config from "../config/index.ts";
-import { pool } from "../config/db.ts";
+import config from "../config";
+import { pool } from "../config/db";
 export const auth=(...roles:string[])=>{
     return async(req:Request,res:Response,next:NextFunction)=>{
     try{

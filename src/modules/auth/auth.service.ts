@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { pool } from "../../config/db.ts";
-import config from "../../config/index.ts";
+import { pool } from "../../config/db";
+import config from "../../config";
 import jwt, { JwtPayload } from "jsonwebtoken"
 const loginUser=async(email:string,password:string)=>{
 

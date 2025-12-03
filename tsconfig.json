@@ -3,8 +3,8 @@
   "compilerOptions": {
 
     // File Layout
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": "src",
+    "outDir": "dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -15,8 +15,8 @@
     "types": ["node"],
     // and npm install -D @types/node
    "moduleResolution": "bundler",  //important for ignore import * 
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
+    // "allowImportingTsExtensions": true,
+    // "noEmit": false,
         // Other Outputs
     // "sourceMap": true,
     // "declaration": true,

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import logger from "../../middleware/logger.ts";
-import { AuthController } from "./auth.controller.ts";
+import logger from "../../middleware/logger";
+import { AuthController } from "./auth.controller";
 
 
 const route=Router();
