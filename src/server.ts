@@ -5,7 +5,6 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import http from "http";
 
 import initDB, { pool } from "./config/db.ts";
 import config from "./config/index.ts";
@@ -22,44 +21,10 @@ initDB();
 
 app.use('/api/v1',userRoutes);
 
-app.get("/users/:id", async (req: Request, res: Response) => {
-  console.log("hit here");
-  const { id } = req.params;
-  console.log("id", id);
 
-  const result = await pool.query(`SELECT * FROM users WHERE id=${id}`);
-  console.log(result);
-  res.status(200).json({
-    status: 200,
-    success: true,
-    data: result.rows,
-  });
-});
 
-app.get("/users",logger, async (req: Request, res: Response) => {
-  const result = await pool.query("SELECT * FROM users");
-  res.status(200).json({
-    status: 200,
-    success: true,
-    data: result.rows,
-  });
-});
 
-app.post("/users", async (req: Request, res: Response) => {
-  console.log(typeof req?.body);
-  const [, a, b, c, d, e] = Object.values(req.body);
 
-  const result = await pool.query(
-    `INSERT INTO users (name,email,age,phone,address) VALUES ($1, $2, $3, $4, $5) RETURNING * `,
-    [a, b, c, d, e]
-  );
-  res.status(200).json({
-    status: 200,
-    success: true,
-    message: "user created successfully",
-    data: result.rows[0],
-  });
-});
 
 
 app.put("/users/:id", async (req: Request, res: Response) => {
@@ -100,16 +65,7 @@ app.put("/users/:id", async (req: Request, res: Response) => {
   });
 });
 
-app.delete("/users/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const deleteData = await pool.query(`DELETE FROM users WHERE id=${id}`);
-  console.log(deleteData);
-  res.status(200).json({
-    success: true,
-    message: "Data deleted successfully",
-    data: deleteData,
-  });
-});
+
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({
