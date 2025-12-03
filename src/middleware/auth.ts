@@ -3,13 +3,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import config from "../config/index.ts";
 export const auth=(...roles:string[])=>{
     return async(req:Request,res:Response,next:NextFunction)=>{
-      if(roles.length === 0){
-        res.status(400).json({
-            success:false,
-            status:400,
-            message:"You are not allowed"
-        })
-      }
+    try{
+     
       const token=await req.headers.authorization;
       if(!token){
         res.status(400).json({
@@ -19,19 +14,23 @@ export const auth=(...roles:string[])=>{
         })
       }
 
-
-     
-      console.log("config.jwt_secret",config.jwt_secret);
-      const decoded=await jwt.verify(token as string,config.jwt_secret as string);
-      if(!decoded){
+      const decoded=await jwt.verify(token as string,config.jwt_secret as string) as JwtPayload;
+      if(roles.length && !roles.includes(decoded?.role)){
         res.status(400).json({
             success:false,
             status:400,
             message:"You are not allowed"
         })
       }
-      req.user=decoded as JwtPayload;
+      req.user=decoded;
       next();
-
+    }
+    catch(error:any){
+        res.status(400).json({
+            success:false,
+            status:400,
+            message:error.message
+        })
+    }
     }
 }
